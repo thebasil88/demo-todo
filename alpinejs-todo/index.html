@@ -5,15 +5,53 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alpine.js Todo App</title>
-    <link rel="stylesheet" href="css/dst/tailwind.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body>
-    <h1 class="text-blue-400 text-4xl">Alpine.JS Todo</h1>
-    <div x-data="{ open: false }">
-      <button @click="open = ! open">Toggle Content</button>
+    <div
+      x-data="todos"
+      class="flex flex-col justify-center h-screen bg-blue-300"
+    >
+      <div>
+        <div
+          class="container mx-auto max-w-screen-sm bg-white p-4 rounded shadow-2xl"
+        >
+          <h1 class="text-3xl font-bold uppercase text-blue-400 mb-4">
+            Alpine.JS Todo
+          </h1>
+          <ul class="list-disc ml-5">
+            <template x-for="todo in todos">
+              <li x-text="todo"></li>
+            </template>
+          </ul>
+          <div class="py-4">
+            <p x-text="todoText"></p>
+            <p>
+              <input
+                type="text"
+                name="todo"
+                id=""
+                placeholder="Add todo here"
+                x-model="todoText"
+              />
+            </p>
 
-      <div x-show="open">
-        Content...
+            <div class="flex flex-row space-x-2 mt-4">
+              <button
+                @click.preventDefault="addTodo()"
+                class="bg-blue-400 hover:bg-blue-600 text-white uppercase px-4 py-2.5 rounded"
+              >
+                Add Todo
+              </button>
+              <button
+                @click.preventDefault="clearAllTodos()"
+                class="bg-blue-600 hover:bg-blue-400 text-white uppercase px-4 py-2.5 rounded"
+              >
+                Clear all todos
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <script
@@ -21,5 +59,26 @@
       src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
     <script src="app.js"></script>
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.data('todos', () => ({
+          todos: [],
+          todoText: '',
+          init() {
+            this.todos = JSON.parse(window.localStorage.getItem('todos')) || []
+          },
+          addTodo() {
+            console.log(this.todoText)
+            this.todos.push(this.todoText)
+            this.todoText = ''
+            window.localStorage.setItem('todos', JSON.stringify(this.todos))
+          },
+          clearAllTodos() {
+            this.todos = []
+            window.localStorage.setItem('todos', JSON.stringify(this.todos))
+          },
+        }))
+      })
+    </script>
   </body>
 </html>
