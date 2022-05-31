@@ -1,119 +1,75 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from '@/components/HelloWorld.vue'
+import { onMounted } from '@vue/runtime-core'
+</script>
+<script>
+export default {
+  data() {
+    return {
+      todos: [],
+      todoText: '',
+    }
+  },
+  mounted() {
+    this.todos = JSON.parse(localStorage.getItem('todos')) || []
+  },
+  methods: {
+    addTodo() {
+      this.todos = [...this.todos, this.todoText]
+      localStorage.setItem('todos', JSON.stringify(this.todos))
+      this.todoText = ''
+    },
+  },
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div
+    x-data="todos"
+    class="flex flex-col justify-center h-screen bg-green-300"
+  >
+    <div>
+      <div
+        class="container mx-auto max-w-screen-sm bg-white p-4 rounded shadow-2xl"
+      >
+        <h1 class="text-3xl font-bold uppercase text-green-400 mb-4">
+          Vue3 Todo
+        </h1>
+        <ul class="list-disc ml-5">
+          <template v-for="(todo, index) in todos" v-bind:key="index">
+            <li v-text="todo"></li>
+          </template>
+        </ul>
+        <div class="py-4">
+          <p>
+            <input
+              type="text"
+              name="todo"
+              id=""
+              placeholder="Add todo here"
+              v-model="todoText"
+            />
+          </p>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+          <div class="flex flex-row space-x-2 mt-4">
+            <button
+              @click.preventDefault="addTodo()"
+              class="bg-green-400 hover:bg-green-600 text-white uppercase px-4 py-2.5 rounded"
+            >
+              Add Todo
+            </button>
+            <button
+              @click.preventDefault="clearAllTodos()"
+              class="bg-green-600 hover:bg-green-400 text-white uppercase px-4 py-2.5 rounded"
+            >
+              Clear all todos
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
-<style>
-@import '@/assets/base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
-}
-
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+<style scoped></style>
