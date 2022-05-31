@@ -1,62 +1,47 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
 <script>
-	import Counter from '$lib/Counter.svelte';
+	import About from './about.svelte';
+	import { onMount } from 'svelte';
+	let todos = [];
+	let newTodo = '';
+	const addTodo = () => {
+		todos = [...todos, newTodo];
+		newTodo = '';
+		localStorage.setItem('todos', JSON.stringify(todos));
+	};
+	const clearAllTodos = () => {
+		todos = [];
+		localStorage.setItem('todos', '');
+	};
+	onMount(async () => {
+		const existingTodos = localStorage.getItem('todos');
+		todos = JSON.parse(existingTodos) || [];
+	});
 </script>
 
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 1;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
-
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
-
-<section>
-	<h1>
-		<div class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
+<div class="flex flex-col justify-center h-screen bg-orange-300">
+	<div>
+		<div class="container mx-auto max-w-screen-sm bg-white p-4 rounded shadow-2xl ">
+			<h1 class="text-3xl font-bold uppercase text-orange-400 mb-4">Svelte Todo list</h1>
+			<ul class="list-disc ml-5">
+				{#each todos as todo}
+					<li>{todo}</li>
+				{/each}
+			</ul>
+			<div class="py-4">
+				<input type="text" name="todo" id="" placeholder="Add todo here" bind:value={newTodo} />
+				<div class="flex flex-row space-x-2 mt-4">
+					<button
+						on:click|preventDefault={addTodo}
+						class="bg-orange-400 hover:bg-orange-600 text-white uppercase px-4 py-2.5 rounded">
+						Add Todo
+					</button>
+					<button
+						on:click|preventDefault={clearAllTodos}
+						class="bg-orange-600 hover:bg-orange-400 text-white uppercase px-4 py-2.5 rounded">
+						Clear all todos
+					</button>
+				</div>
+			</div>
 		</div>
-		to your new
-		<br />
-		SvelteKit app
-	</h1>
-
-	<h2 class="text-3xl text-red-300">
-		try editing
-		<strong>src/routes/index.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
+	</div>
+</div>
